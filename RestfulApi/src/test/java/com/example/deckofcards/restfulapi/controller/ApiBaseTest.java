@@ -62,6 +62,10 @@ public class ApiBaseTest {
         callerUtils.callApi(link);
     }
 
+    protected  <TResponse> TResponse callApi(Link link, TypeReference<TResponse> typeReference) throws Exception {
+        return callerUtils.callApi(link, typeReference);
+    }
+
     @SneakyThrows
     protected List<Link> getRootLinks() {
         return callerUtils.getRootLinks();

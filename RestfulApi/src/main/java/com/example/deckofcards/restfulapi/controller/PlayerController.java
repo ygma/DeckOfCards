@@ -29,7 +29,8 @@ public class PlayerController {
 
         return new LinksResponse<>(new ResourceCreatedResponse(player.getId()), asList(
                 new Link("/games/" + gameId + "/players/" + player.getId(), LinkRels.REMOVE_PLAYER_FROM_GAME, LinkTypes.DELETE),
-                new Link("/games/" + gameId + "/players/" + player.getId() + "/cards", LinkRels.DEAL_CARD, LinkTypes.POST)
+                new Link("/games/" + gameId + "/players/" + player.getId() + "/cards", LinkRels.DEAL_CARD, LinkTypes.POST),
+                new Link("/games/" + gameId + "/players/" + player.getId() + "/cards", LinkRels.LIST_CARDS, LinkTypes.GET)
         ));
     }
 
