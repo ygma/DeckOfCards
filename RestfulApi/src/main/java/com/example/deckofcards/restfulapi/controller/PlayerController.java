@@ -23,12 +23,13 @@ public class PlayerController {
     @PostMapping("/games/{gameId}/players")
     public LinksResponse<ResourceCreatedResponse> addPlayer(@PathVariable("gameId") String gameId) {
         Game game = gameRepository.get(gameId);
-        Player player = new Player(UUID.randomUUID().toString());
+        Player player = new Player(UUID.randomUUID().toString(), emptyList());
         game.getPlayerMap().put(player.getId(), player);
         gameRepository.save(game);
 
         return new LinksResponse<>(new ResourceCreatedResponse(player.getId()), asList(
-                new Link("/games/" + gameId + "/players/" + player.getId(), LinkRels.REMOVE_PLAYER_FROM_GAME, LinkTypes.DELETE)
+                new Link("/games/" + gameId + "/players/" + player.getId(), LinkRels.REMOVE_PLAYER_FROM_GAME, LinkTypes.DELETE),
+                new Link("/games/" + gameId + "/players/" + player.getId() + "/cards", LinkRels.DEAL_CARD, LinkTypes.POST)
         ));
     }
 
