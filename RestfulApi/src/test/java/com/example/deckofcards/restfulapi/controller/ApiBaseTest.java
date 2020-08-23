@@ -1,5 +1,6 @@
 package com.example.deckofcards.restfulapi.controller;
 
+import com.example.deckofcards.restfulapi.controller.response.Link;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,14 +38,23 @@ public class ApiBaseTest {
             String url,
             TypeReference<TResponse> typeReference) throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = request(httpMethod, url);
-        String contentAsString = mockMvc.perform(requestBuilder)
-                .andDo(print())
-                .andExpect(status().isOk())
+        ResultActions resultActions = callApi(httpMethod, url, status().isOk());
+        String contentAsString = resultActions
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
         return objectMapper.readValue(contentAsString, typeReference);
+    }
+
+    protected ResultActions callApi(HttpMethod httpMethod, String url, ResultMatcher resultMatcher) throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = request(httpMethod, url);
+        return mockMvc.perform(requestBuilder)
+                .andDo(print())
+                .andExpect(resultMatcher);
+    }
+
+    protected void callApi(Link link) throws Exception {
+        callApi(HttpMethod.resolve(link.getType()), link.getHref(), status().isOk());
     }
 }

@@ -11,15 +11,25 @@ import java.util.Map;
 @Repository
 @Lazy
 public class GameRepositoryImpl implements GameRepository {
-    private Map<String, Game> games = new HashMap<>();
+    private Map<String, Game> gameMap = new HashMap<>();
+
+    @Override
+    public Game get(String gameId) {
+        return gameMap.getOrDefault(gameId, null);
+    }
 
     @Override
     public void save(Game game) {
-        games.put(game.getId(), game);
+        gameMap.put(game.getId(), game);
     }
 
     @Override
     public List<Game> getAll() {
-        return new ArrayList<>(games.values());
+        return new ArrayList<>(gameMap.values());
+    }
+
+    @Override
+    public void delete(Game game) {
+        gameMap.remove(game.getId());
     }
 }
