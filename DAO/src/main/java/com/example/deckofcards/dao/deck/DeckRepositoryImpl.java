@@ -2,20 +2,32 @@ package com.example.deckofcards.dao.deck;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class DeckRepositoryImpl implements DeckRepository {
-    private Map<String, Deck> deckMap = new HashMap<>();
+    private LinkedList<Deck> decks = new LinkedList<>();
 
     @Override
     public void save(Deck deck) {
-        deckMap.put(deck.getId(), deck);
+        decks.offer(deck);
     }
 
     @Override
-    public Deck get(String id) {
-        return deckMap.getOrDefault(id, null);
+    public List<Deck> getAll() {
+        return decks;
+    }
+
+    @Override
+    public void reset() {
+        decks.clear();
+    }
+
+    @Override
+    public Deck consume() {
+        if (decks.isEmpty()) {
+            return null;
+        }
+        return decks.poll();
     }
 }

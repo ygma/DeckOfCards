@@ -1,8 +1,11 @@
 package com.example.deckofcards.restfulapi.controller;
 
+import com.example.deckofcards.dao.deck.Deck;
+import com.example.deckofcards.dao.deck.DeckRepository;
 import com.example.deckofcards.dao.game.Game;
 import com.example.deckofcards.dao.game.GameRepository;
 import com.example.deckofcards.restfulapi.controller.response.*;
+import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -19,14 +24,30 @@ import static java.util.Arrays.asList;
 public class GameController {
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private DeckRepository deckRepository;
 
     @PostMapping("/games")
     public LinksResponse<ResourceCreatedResponse> createGame() {
-        Game game = new Game(UUID.randomUUID().toString());
+        Game game = new Game(UUID.randomUUID().toString(), new ArrayList<>());
         gameRepository.save(game);
-        return new LinksResponse<>(new ResourceCreatedResponse(game.getId()), asList(
-                new Link("/games/" + game.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE)
-        ));
+
+        var response = new LinksResponse<>(
+                new ResourceCreatedResponse(game.getId()),
+                new ArrayList<>());
+
+        response.getLinks().add(new Link("/games/" + game.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE));
+
+        List<Deck> decks = deckRepository.getAll();
+        if (!decks.isEmpty()) {
+            Link link = new Link(
+                    "/games/" + game.getId() + "/decks",
+                    LinkRels.ADD_DECK_TO_GAME,
+                    LinkTypes.POST);
+            response.getLinks().add(link);
+        }
+
+        return response;
     }
 
     @DeleteMapping("/games/{id}")

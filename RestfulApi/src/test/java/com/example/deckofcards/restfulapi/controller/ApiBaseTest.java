@@ -1,7 +1,10 @@
 package com.example.deckofcards.restfulapi.controller;
 
+import com.example.deckofcards.dao.deck.DeckRepository;
+import com.example.deckofcards.dao.game.GameRepository;
 import com.example.deckofcards.restfulapi.controller.response.Link;
 import com.example.deckofcards.restfulapi.controller.response.LinksResponse;
+import com.example.deckofcards.restfulapi.controller.response.ResourceCreatedResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -30,10 +33,16 @@ public class ApiBaseTest {
 
     @Autowired
     protected MockMvc mockMvc;
+    @Autowired
+    protected GameRepository gameRepository;
+    @Autowired
+    protected DeckRepository deckRepository;
 
     @BeforeEach
     protected void beforeEachBase() {
         objectMapper = new ObjectMapper();
+        gameRepository.reset();
+        deckRepository.reset();
     }
 
     protected <TResponse> TResponse callApi(
@@ -65,7 +74,7 @@ public class ApiBaseTest {
         return links.stream()
                 .filter(link -> link.getRel().equals(rel))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("not found"));
+                .orElse(null);
     }
 
     private <TResponse> TResponse deserialize(
@@ -86,5 +95,12 @@ public class ApiBaseTest {
                 "/",
                 new TypeReference<LinksResponse<String>>() {
                 }).getLinks();
+    }
+
+    protected LinksResponse<ResourceCreatedResponse> callApiToCreateResource(Link linkToCreateGame) throws Exception {
+        return callApi(
+                linkToCreateGame,
+                new TypeReference<LinksResponse<ResourceCreatedResponse>>() {
+                });
     }
 }

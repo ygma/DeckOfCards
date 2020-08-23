@@ -31,4 +31,9 @@ public class GameRepositoryImpl implements GameRepository {
     public void delete(Game game) {
         gameMap.remove(game.getId());
     }
+
+    @Override
+    public void reset() {
+        gameMap.clear();
+    }
 }

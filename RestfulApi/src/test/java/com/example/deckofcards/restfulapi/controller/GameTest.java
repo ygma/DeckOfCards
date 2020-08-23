@@ -1,12 +1,10 @@
 package com.example.deckofcards.restfulapi.controller;
 
-import com.example.deckofcards.restfulapi.controller.response.*;
 import com.example.deckofcards.dao.game.Game;
-import com.example.deckofcards.dao.game.GameRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.deckofcards.restfulapi.controller.response.*;
 import lombok.SneakyThrows;
+import lombok.var;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 
 import java.util.List;
@@ -17,13 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GameTest extends ApiBaseTest {
-    @Autowired
-    private GameRepository gameRepository;
 
     @Test
     @SneakyThrows
     public void should_create_and_delete_game() {
-        LinksResponse<ResourceCreatedResponse> actual = callApiToCreateGame();
+        var actual = callApiToCreateGame();
 
         assertCreatedGame(actual);
 
@@ -45,7 +41,7 @@ public class GameTest extends ApiBaseTest {
 
     private LinksResponse<ResourceCreatedResponse> callApiToCreateGame() throws Exception {
         Link link = getLink(getRootLinks(), LinkRels.CREATE_GAME);
-        return callApi(link, new TypeReference<LinksResponse<ResourceCreatedResponse>>() {});
+        return callApiToCreateResource(link);
     }
 
     private void assertCreatedGame(LinksResponse<ResourceCreatedResponse> actual) {
@@ -53,7 +49,7 @@ public class GameTest extends ApiBaseTest {
         assertTrue(actualGames.size() > 0);
 
         Game actualGame = actualGames.get(0);
-        LinksResponse<ResourceCreatedResponse> expected = new LinksResponse<>(
+        var expected = new LinksResponse<>(
                 new ResourceCreatedResponse(actualGames.get(0).getId()),
                 asList(new Link("/games/" + actualGame.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE))
         );

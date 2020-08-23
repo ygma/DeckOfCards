@@ -10,4 +10,6 @@ public interface GameRepository {
     List<Game> getAll();
 
     void delete(Game game);
+
+    void reset();
 }
