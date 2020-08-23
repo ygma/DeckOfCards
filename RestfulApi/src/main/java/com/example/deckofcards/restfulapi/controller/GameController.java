@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +30,11 @@ public class GameController {
 
     @PostMapping("/games")
     public LinksResponse<ResourceCreatedResponse> createGame() {
-        Game game = new Game(UUID.randomUUID().toString(), new ArrayList<>());
+        Game game = new Game(
+                UUID.randomUUID().toString(),
+                new ArrayList<>(),
+                new HashMap<>());
+
         gameRepository.save(game);
 
         var response = new LinksResponse<>(
@@ -37,6 +42,7 @@ public class GameController {
                 new ArrayList<>());
 
         response.getLinks().add(new Link("/games/" + game.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE));
+        response.getLinks().add(new Link("/games/" + game.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST));
 
         List<Deck> decks = deckRepository.getAll();
         if (!decks.isEmpty()) {
