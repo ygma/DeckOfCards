@@ -6,8 +6,10 @@ import com.example.deckofcards.restfulapi.controller.response.LinkRels;
 import lombok.SneakyThrows;
 import lombok.var;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PlayerTest extends ApiBaseTest {
     @Test
@@ -19,9 +21,27 @@ public class PlayerTest extends ApiBaseTest {
         Link linkToAddPlayer = getLink(gameResponse.getLinks(), LinkRels.ADD_PLAYER_TO_GAME);
         assertNotNull(linkToAddPlayer);
 
-        var actualPlayCreatedResponse = callApiToCreateResource(linkToAddPlayer);
+        var actualPlayerCreatedResponse = callApiToCreateResource(linkToAddPlayer);
         Game game = gameRepository.get(gameResponse.getData().getId());
         assertEquals(1, game.getPlayerMap().size());
-        assertTrue(game.getPlayerMap().containsKey(actualPlayCreatedResponse.getData().getId()));
+        assertTrue(game.getPlayerMap().containsKey(actualPlayerCreatedResponse.getData().getId()));
+    }
+
+    @Test
+    @SneakyThrows
+    public void should_delete_player_from_a_game() {
+        Link linkToCreateGame = getLink(getRootLinks(), LinkRels.CREATE_GAME);
+        var gameResponse = callApiToCreateResource(linkToCreateGame);
+
+        Link linkToAddPlayer = getLink(gameResponse.getLinks(), LinkRels.ADD_PLAYER_TO_GAME);
+        var playerResponse = callApiToCreateResource(linkToAddPlayer);
+
+        String gameId = gameResponse.getData().getId();
+        String playerId = playerResponse.getData().getId();
+
+        callApi(HttpMethod.DELETE, "/games/" + gameId + "/players/" + playerId, status().isOk());
+
+        Game game = gameRepository.get(gameId);
+        assertEquals(0, game.getPlayerMap().size());
     }
 }
