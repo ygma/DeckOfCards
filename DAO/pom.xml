@@ -9,15 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>RestfulApi</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>DAO</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    <artifactId>DAO</artifactId>
 
 
 </project>

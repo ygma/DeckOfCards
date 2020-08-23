@@ -5,6 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>RestfulApi</module>
+        <module>DAO</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
