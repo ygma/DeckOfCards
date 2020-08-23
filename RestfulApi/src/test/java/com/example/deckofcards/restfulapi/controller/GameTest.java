@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
+import static com.example.deckofcards.restfulapi.utils.LinkUtils.getLink;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

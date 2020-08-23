@@ -5,6 +5,7 @@ import com.example.deckofcards.dao.game.GameRepository;
 import com.example.deckofcards.restfulapi.controller.response.Link;
 import com.example.deckofcards.restfulapi.controller.response.LinksResponse;
 import com.example.deckofcards.restfulapi.controller.response.ResourceCreatedResponse;
+import com.example.deckofcards.restfulapi.utils.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ApiBaseTest {
 
-    protected ObjectMapper objectMapper;
+    protected CallerUtils callerUtils;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -40,7 +41,7 @@ public class ApiBaseTest {
 
     @BeforeEach
     protected void beforeEachBase() {
-        objectMapper = new ObjectMapper();
+        callerUtils = new CallerUtils(mockMvc);
         gameRepository.reset();
         deckRepository.reset();
     }
@@ -50,57 +51,27 @@ public class ApiBaseTest {
             String url,
             TypeReference<TResponse> typeReference) throws Exception {
 
-        ResultActions resultActions = callApi(httpMethod, url, status().isOk());
-        return deserialize(typeReference, resultActions);
+        return callerUtils.callApi(httpMethod, url, typeReference);
     }
 
     protected ResultActions callApi(HttpMethod httpMethod, String url, ResultMatcher resultMatcher) throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = request(httpMethod, url);
-        return mockMvc.perform(requestBuilder)
-                .andDo(print())
-                .andExpect(resultMatcher);
+        return callerUtils.callApi(httpMethod, url, resultMatcher);
     }
 
     protected void callApi(Link link) throws Exception {
-        callApi(HttpMethod.resolve(link.getType()), link.getHref(), status().isOk());
-    }
-
-    protected <TResponse> TResponse callApi(Link link, TypeReference<TResponse> typeReference) throws Exception {
-        ResultActions resultActions = callApi(HttpMethod.resolve(link.getType()), link.getHref(), status().isOk());
-        return deserialize(typeReference, resultActions);
-    }
-
-    protected Link getLink(List<Link> links, String rel) {
-        return links.stream()
-                .filter(link -> link.getRel().equals(rel))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private <TResponse> TResponse deserialize(
-            TypeReference<TResponse> typeReference,
-            ResultActions resultActions) throws UnsupportedEncodingException, com.fasterxml.jackson.core.JsonProcessingException {
-        String contentAsString = resultActions
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        return objectMapper.readValue(contentAsString, typeReference);
+        callerUtils.callApi(link);
     }
 
     @SneakyThrows
     protected List<Link> getRootLinks() {
-        return callApi(
-                HttpMethod.GET,
-                "/",
-                new TypeReference<LinksResponse<String>>() {
-                }).getLinks();
+        return callerUtils.getRootLinks();
     }
 
     protected LinksResponse<ResourceCreatedResponse> callApiToCreateResource(Link linkToCreateGame) throws Exception {
-        return callApi(
-                linkToCreateGame,
-                new TypeReference<LinksResponse<ResourceCreatedResponse>>() {
-                });
+        return callerUtils.callApiToCreateResource(linkToCreateGame);
+    }
+
+    protected SimpleTestContext buildSimpleTestContext() {
+        return SimpleTestContext.build(callerUtils);
     }
 }

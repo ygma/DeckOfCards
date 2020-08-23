@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.var;
 import org.junit.jupiter.api.Test;
 
+import static com.example.deckofcards.restfulapi.utils.LinkUtils.getLink;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTest extends ApiBaseTest {

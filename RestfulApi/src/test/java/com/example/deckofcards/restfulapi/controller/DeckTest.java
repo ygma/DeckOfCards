@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.example.deckofcards.restfulapi.utils.LinkUtils.getLink;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DeckTest extends ApiBaseTest{
