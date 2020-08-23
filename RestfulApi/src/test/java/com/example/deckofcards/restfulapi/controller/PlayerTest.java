@@ -6,10 +6,8 @@ import com.example.deckofcards.restfulapi.controller.response.LinkRels;
 import lombok.SneakyThrows;
 import lombok.var;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PlayerTest extends ApiBaseTest {
     @Test
@@ -36,11 +34,10 @@ public class PlayerTest extends ApiBaseTest {
         Link linkToAddPlayer = getLink(gameResponse.getLinks(), LinkRels.ADD_PLAYER_TO_GAME);
         var playerResponse = callApiToCreateResource(linkToAddPlayer);
 
+        Link linkToRemovePlayer = getLink(playerResponse.getLinks(), LinkRels.REMOVE_PLAYER_FROM_GAME);
+        callApi(linkToRemovePlayer);
+
         String gameId = gameResponse.getData().getId();
-        String playerId = playerResponse.getData().getId();
-
-        callApi(HttpMethod.DELETE, "/games/" + gameId + "/players/" + playerId, status().isOk());
-
         Game game = gameRepository.get(gameId);
         assertEquals(0, game.getPlayerMap().size());
     }
