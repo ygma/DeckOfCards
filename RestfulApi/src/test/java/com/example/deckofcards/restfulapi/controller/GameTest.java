@@ -1,8 +1,6 @@
 package com.example.deckofcards.restfulapi.controller;
 
-import com.example.deckofcards.restfulapi.controller.GameController.GameResponse;
-import com.example.deckofcards.restfulapi.controller.response.Link;
-import com.example.deckofcards.restfulapi.controller.response.LinksResponse;
+import com.example.deckofcards.restfulapi.controller.response.*;
 import com.example.deckofcards.dao.game.Game;
 import com.example.deckofcards.dao.game.GameRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -25,7 +23,7 @@ public class GameTest extends ApiBaseTest {
     @Test
     @SneakyThrows
     public void should_create_and_delete_game() {
-        LinksResponse<GameResponse> actual = callApiToCreateGame();
+        LinksResponse<ResourceCreatedResponse> actual = callApiToCreateGame();
 
         assertCreatedGame(actual);
 
@@ -40,25 +38,23 @@ public class GameTest extends ApiBaseTest {
         callApi(HttpMethod.DELETE, "/games/1234", status().isNotFound());
     }
 
-    private void callApiToDeleteGame(LinksResponse<GameResponse> actual) throws Exception {
-        Link deleteLink = actual.getLinks().get(0);
+    private void callApiToDeleteGame(LinksResponse<ResourceCreatedResponse> actual) throws Exception {
+        Link deleteLink = getLink(actual.getLinks(), LinkRels.DELETE_GAME);
         callApi(deleteLink);
     }
 
-    private LinksResponse<GameResponse> callApiToCreateGame() throws Exception {
-        return callApi(
-                    HttpMethod.POST,
-                    "/games",
-                    new TypeReference<LinksResponse<GameResponse>>() {});
+    private LinksResponse<ResourceCreatedResponse> callApiToCreateGame() throws Exception {
+        Link link = getLink(getRootLinks(), LinkRels.CREATE_GAME);
+        return callApi(link, new TypeReference<LinksResponse<ResourceCreatedResponse>>() {});
     }
 
-    private void assertCreatedGame(LinksResponse<GameResponse> actual) {
+    private void assertCreatedGame(LinksResponse<ResourceCreatedResponse> actual) {
         List<Game> actualGames = gameRepository.getAll();
         assertTrue(actualGames.size() > 0);
 
         Game actualGame = actualGames.get(0);
-        LinksResponse<GameResponse> expected = new LinksResponse<>(
-                new GameResponse(actualGames.get(0).getId()),
+        LinksResponse<ResourceCreatedResponse> expected = new LinksResponse<>(
+                new ResourceCreatedResponse(actualGames.get(0).getId()),
                 asList(new Link("/games/" + actualGame.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE))
         );
         assertEquals(expected, actual);

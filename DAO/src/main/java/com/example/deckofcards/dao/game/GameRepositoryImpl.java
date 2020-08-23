@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Lazy
 public class GameRepositoryImpl implements GameRepository {
     private Map<String, Game> gameMap = new HashMap<>();
 
