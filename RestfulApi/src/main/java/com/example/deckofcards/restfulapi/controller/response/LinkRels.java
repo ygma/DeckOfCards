@@ -9,4 +9,5 @@ public class LinkRels {
     public static final String REMOVE_PLAYER_FROM_GAME = "remove player from game";
     public static final String DEAL_CARD = "deal card";
     public static final String LIST_CARDS = "list cards";
+    public static final String LIST_PLAYERS = "list players";
 }

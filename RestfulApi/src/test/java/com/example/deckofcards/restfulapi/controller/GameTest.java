@@ -53,7 +53,8 @@ public class GameTest extends ApiBaseTest {
         var expected = new LinksResponse<>(
                 new ResourceCreatedResponse(actualGames.get(0).getId()),
                 asList(new Link("/games/" + actualGame.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE),
-                        new Link("/games/" + actualGame.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST))
+                        new Link("/games/" + actualGame.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST),
+                        new Link("/games/" + actualGame.getId() + "/players", LinkRels.LIST_PLAYERS, LinkTypes.GET))
         );
         assertEquals(expected, actual);
     }

@@ -41,6 +41,7 @@ public class GameController {
 
         response.getLinks().add(new Link("/games/" + game.getId(), LinkRels.DELETE_GAME, LinkTypes.DELETE));
         response.getLinks().add(new Link("/games/" + game.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST));
+        response.getLinks().add(new Link("/games/" + game.getId() + "/players", LinkRels.LIST_PLAYERS, LinkTypes.GET));
 
         List<Deck> decks = deckRepository.getAll();
         if (!decks.isEmpty()) {
