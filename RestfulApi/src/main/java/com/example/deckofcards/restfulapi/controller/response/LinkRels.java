@@ -10,4 +10,5 @@ public class LinkRels {
     public static final String DEAL_CARD = "deal card";
     public static final String LIST_CARDS = "list cards";
     public static final String LIST_PLAYERS = "list players";
+    public static final String UNDEALT_CARDS_PER_SUIT = "undealt cards per suit";
 }

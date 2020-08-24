@@ -77,4 +77,18 @@ public class CardTest extends ApiBaseTest {
         LinksResponse<List<Card>> response = callApi(linkToListCards, new TypeReference<LinksResponse<List<Card>>>() {});
         assertEquals(2, response.getData().size());
     }
+
+    @Test
+    @SneakyThrows
+    public void should_get_the_number_of_undealt_cards_per_suit() {
+        SimpleTestContext testContext = buildSimpleTestContext();
+
+        Link link = testContext.getLinkFromGame(LinkRels.UNDEALT_CARDS_PER_SUIT);
+        var actualResponse = callApi(link, new TypeReference<LinksResponse<List<CardController.SuitResponse>>>() {});
+
+        List<CardController.SuitResponse> suitResponseList = actualResponse.getData();
+        assertEquals(4, suitResponseList.size());
+
+        suitResponseList.forEach(suitResponse -> assertEquals(13, suitResponse.getCount()));
+    }
 }

@@ -47,8 +47,10 @@ public class SimpleTestContext {
     }
 
     public Link getLinkFromPlayer(String rel) {
-        List<Link> links = playerResponse.getLinks();
-        return getLink(links, rel);
+        return getLink(playerResponse.getLinks(), rel);
     }
 
+    public Link getLinkFromGame(String rel) {
+        return getLink(gameResponse.getLinks(), rel);
+    }
 }
