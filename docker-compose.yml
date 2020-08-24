@@ -1,0 +1,8 @@
+version: '3.4'
+services:
+  deck-of-cards:
+    build:
+      context: .
+      target: deck-of-cards
+    ports:
+      - "8080:8080"

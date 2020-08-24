@@ -9,15 +9,31 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>RestfulApi</artifactId>
+    <artifactId>deck-of-cards-restfulapi</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>DAO</artifactId>
+            <artifactId>deck-of-cards-dao</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>restfulapi</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
