@@ -2,6 +2,7 @@ package com.example.deckofcards.restfulapi.controller;
 
 import com.example.deckofcards.dao.card.Card;
 import com.example.deckofcards.dao.card.CardSuit;
+import com.example.deckofcards.dao.card.CardValue;
 import com.example.deckofcards.dao.game.Game;
 import com.example.deckofcards.dao.game.GameRepository;
 import com.example.deckofcards.dao.game.Player;
@@ -15,10 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 
@@ -69,11 +68,41 @@ public class CardController {
         return new LinksResponse<>(new ArrayList<>(map.values()), emptyList());
     }
 
+    @GetMapping("/games/{gameId}/cards/undealt/suits/values")
+    public LinksResponse<List<SuitValueResponse>> getUndealtCountBySuitValue(@PathVariable("gameId") String gameId) {
+        Game game = gameRepository.get(gameId);
+
+        Map<Card, SuitValueResponse> map = new HashMap<>();
+
+        game.getUnDealtCards().forEach(card -> {
+            if (!map.containsKey(card)) {
+                map.put(card, new SuitValueResponse(card.getSuit(), card.getValue(), 0));
+            }
+            SuitValueResponse suitValueResponse = map.get(card);
+            suitValueResponse.count++;
+        });
+
+        List<SuitValueResponse> list = map.values().stream()
+                .sorted(Comparator.comparing(SuitValueResponse::getSuit).thenComparing((response1, response2) -> response2.getValue().compareTo(response1.getValue())))
+                .collect(Collectors.toList());
+
+        return new LinksResponse<>(list, emptyList());
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SuitResponse {
         private CardSuit suit;
+        private int count;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SuitValueResponse {
+        private CardSuit suit;
+        private CardValue value;
         private int count;
     }
 }

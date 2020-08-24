@@ -43,6 +43,7 @@ public class GameController {
         response.getLinks().add(new Link("/games/" + game.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST));
         response.getLinks().add(new Link("/games/" + game.getId() + "/players", LinkRels.LIST_PLAYERS, LinkTypes.GET));
         response.getLinks().add(new Link("/games/" + game.getId() + "/cards/undealt/suits", LinkRels.UNDEALT_CARDS_PER_SUIT, LinkTypes.GET));
+        response.getLinks().add(new Link("/games/" + game.getId() + "/cards/undealt/suits/values", LinkRels.UNDEALT_CARD_COUNT_BY_SUIT_AND_VALUE, LinkTypes.GET));
 
         List<Deck> decks = deckRepository.getAll();
         if (!decks.isEmpty()) {
