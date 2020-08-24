@@ -130,4 +130,25 @@ public class CardTest extends ApiBaseTest {
             }
         }
     }
+
+    @Test
+    @SneakyThrows
+    public void should_shuffle_undealt_cards() {
+        Link linkToCreateDeck = getLink(getRootLinks(), LinkRels.CREATE_DECK);
+        callApiToCreateResource(linkToCreateDeck);
+
+        Link linkToCreateGame = getLink(getRootLinks(), LinkRels.CREATE_GAME);
+        var gameResponse = callApiToCreateResource(linkToCreateGame);
+
+        Link linkToAddDeckToGame = getLink(gameResponse.getLinks(), LinkRels.ADD_DECK_TO_GAME);
+        callApi(linkToAddDeckToGame);
+
+        List<Card> originalCardOrder = gameRepository.get(gameResponse.getData().getId()).getUnDealtCards();
+
+        Link link = getLink(gameResponse.getLinks(), LinkRels.SHUFFLE);
+        callApi(link);
+
+        List<Card> newOrder = gameRepository.get(gameResponse.getData().getId()).getUnDealtCards();
+        assertNotEquals(originalCardOrder, newOrder);
+    }
 }

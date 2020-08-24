@@ -56,7 +56,8 @@ public class GameTest extends ApiBaseTest {
                         new Link("/games/" + actualGame.getId() + "/players", LinkRels.ADD_PLAYER_TO_GAME, LinkTypes.POST),
                         new Link("/games/" + actualGame.getId() + "/players", LinkRels.LIST_PLAYERS, LinkTypes.GET),
                         new Link("/games/" + actualGame.getId() + "/cards/undealt/suits", LinkRels.UNDEALT_CARDS_PER_SUIT, LinkTypes.GET),
-                        new Link("/games/" + actualGame.getId() + "/cards/undealt/suits/values", LinkRels.UNDEALT_CARD_COUNT_BY_SUIT_AND_VALUE, LinkTypes.GET))
+                        new Link("/games/" + actualGame.getId() + "/cards/undealt/suits/values", LinkRels.UNDEALT_CARD_COUNT_BY_SUIT_AND_VALUE, LinkTypes.GET),
+                        new Link("/games/" + actualGame.getId() + "/cards/undealt/shuffle", LinkRels.SHUFFLE, LinkTypes.POST))
         );
         assertEquals(expected, actual);
     }

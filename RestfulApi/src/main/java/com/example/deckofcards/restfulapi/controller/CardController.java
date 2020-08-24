@@ -7,6 +7,7 @@ import com.example.deckofcards.dao.game.Game;
 import com.example.deckofcards.dao.game.GameRepository;
 import com.example.deckofcards.dao.game.Player;
 import com.example.deckofcards.restfulapi.controller.response.LinksResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
 @RestController
@@ -87,6 +89,22 @@ public class CardController {
                 .collect(Collectors.toList());
 
         return new LinksResponse<>(list, emptyList());
+    }
+
+    @PostMapping("/games/{gameId}/cards/undealt/shuffle")
+    public void shuffle(@PathVariable("gameId") String gameId) {
+        Game game = gameRepository.get(gameId);
+
+        Card[] array = game.getUnDealtCards().toArray(new Card[0]);
+        Random random = new Random();
+        for (int i = 0; i < array.length; i++) {
+            int nextInt = random.nextInt(array.length);
+            Card temp = array[i];
+            array[i] = array[nextInt];
+            array[nextInt] = temp;
+        }
+        game.setUnDealtCards(asList(array));
+        gameRepository.save(game);
     }
 
     @Data
